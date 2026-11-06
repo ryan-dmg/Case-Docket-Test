@@ -21,9 +21,23 @@ main {
   padding: 1.5rem 1rem;
 }
 
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
 h1 {
-  margin: 0 0 1rem;
+  margin: 0;
   font-size: 1.5rem;
+}
+
+/* Disabled buttons use grey text and a dashed border, not color alone */
+button:disabled {
+  color: #6b6b76;
+  border-style: dashed;
+  cursor: not-allowed;
 }
 
 h2 {

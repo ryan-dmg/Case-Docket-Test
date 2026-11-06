@@ -5,7 +5,8 @@
  * Outputs: a React element; filtering is local state, nothing is sent anywhere.
  */
 import { useState } from 'react'
-import { STATUSES, type Case, type Status } from '../types'
+import { allowedTransitions } from '../rules'
+import { STATUSES, type Case, type Role, type Status } from '../types'
 
 // ---- Saved views --------------------------------------------------------------
 
@@ -26,17 +27,20 @@ const VIEWS: readonly SavedView[] = [
 
 /**
  * Renders the saved views, the search and status controls, and the table.
- * Inputs: props.cases, the cases to list.
+ * Inputs: props.cases, the cases to list; props.role, the current user role.
  * Outputs: the case list UI. A row shows when it matches the active saved
- * view, the status dropdown and the search text together.
+ * view, the status dropdown and the search text together. Viewers see no
+ * Actions column; other roles see a button per row that is enabled only
+ * when the rules module allows that role to change the case's status.
  */
-export function CaseList({ cases }: { cases: Case[] }) {
+export function CaseList({ cases, role }: { cases: Case[]; role: Role }) {
   const [viewName, setViewName] = useState('All cases')
   const [status, setStatus] = useState<'' | Status>('')
   const [query, setQuery] = useState('')
 
   const view = VIEWS.find((v) => v.name === viewName) ?? VIEWS[0]
   const needle = query.trim().toLowerCase()
+  const canAct = role !== 'viewer' // viewers read only, so the Actions column is hidden
 
   const visible = cases.filter((c) => {
     if (view.statuses && !view.statuses.includes(c.status)) return false
@@ -92,6 +96,7 @@ export function CaseList({ cases }: { cases: Case[] }) {
               <th scope="col">Title</th>
               <th scope="col">Parties</th>
               <th scope="col">Status</th>
+              {canAct && <th scope="col">Actions</th>}
             </tr>
           </thead>
           <tbody>
@@ -103,6 +108,17 @@ export function CaseList({ cases }: { cases: Case[] }) {
                   {c.plaintiff} / {c.defendant}
                 </td>
                 <td>{c.status}</td>
+                {canAct && (
+                  <td>
+                    <button
+                      type="button"
+                      aria-label={`Change status of ${c.id}`}
+                      disabled={allowedTransitions(role, c.status).length === 0}
+                    >
+                      Change status
+                    </button>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>
