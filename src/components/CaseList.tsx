@@ -27,13 +27,22 @@ const VIEWS: readonly SavedView[] = [
 
 /**
  * Renders the saved views, the search and status controls, and the table.
- * Inputs: props.cases, the cases to list; props.role, the current user role.
+ * Inputs: props.cases, the cases to list; props.role, the current user role;
+ * props.onSelect, called with a case id when its action button is clicked.
  * Outputs: the case list UI. A row shows when it matches the active saved
  * view, the status dropdown and the search text together. Viewers see no
  * Actions column; other roles see a button per row that is enabled only
  * when the rules module allows that role to change the case's status.
  */
-export function CaseList({ cases, role }: { cases: Case[]; role: Role }) {
+export function CaseList({
+  cases,
+  role,
+  onSelect,
+}: {
+  cases: Case[]
+  role: Role
+  onSelect: (id: string) => void
+}) {
   const [viewName, setViewName] = useState('All cases')
   const [status, setStatus] = useState<'' | Status>('')
   const [query, setQuery] = useState('')
@@ -114,6 +123,7 @@ export function CaseList({ cases, role }: { cases: Case[]; role: Role }) {
                       type="button"
                       aria-label={`Change status of ${c.id}`}
                       disabled={allowedTransitions(role, c.status).length === 0}
+                      onClick={() => onSelect(c.id)}
                     >
                       Change status
                     </button>

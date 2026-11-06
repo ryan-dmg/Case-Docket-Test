@@ -116,6 +116,27 @@ td {
   border-bottom: 1px solid #d6d6dd;
 }
 
+/* ---- Case detail ---- */
+.moves {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.25rem 1rem;
+}
+
+dt {
+  font-weight: 700;
+}
+
+dd {
+  margin: 0;
+}
+
 /* ---- Narrow screens: stack the views above the table ---- */
 @media (max-width: 40rem) {
   .layout {
