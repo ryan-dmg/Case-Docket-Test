@@ -10,6 +10,9 @@ import { defineConfig } from 'vitest/config'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  // GitHub Pages serves under /<repo-name>/, so the deploy workflow sets VITE_BASE.
+  // Local dev and the Docker image keep the default of '/'.
+  base: process.env.VITE_BASE ?? '/',
   test: {
     environment: 'jsdom', // component tests need a DOM
     setupFiles: ['./src/test-setup.ts'],
